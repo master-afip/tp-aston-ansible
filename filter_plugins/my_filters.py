@@ -1,12 +1,13 @@
-#!/usr/bin/python
 from natsort import natsorted
+import subprocess
 import re
 
 class FilterModule(object):
     def filters(self):
         return {
             'a_filter': self.a_filter,
-            'latest_version': self.latest_version
+            'latest_version': self.latest_version,
+            'get_device': self.get_device
         }
     def a_filter(self, a_variable):
         a_new_variable = a_variable + ' CRAZY NEW FILTER'
@@ -22,6 +23,21 @@ class FilterModule(object):
                 if m.group(0):
                     break
         return list_of_version
-
-
-
+    def get_device(self, list_device):
+        disk = []
+        device = []
+        flag = 0
+        type_format = ['swap','ext4','xfs','dos']
+        line = list_device.split('\n')
+        #return line
+        for i in line:
+           if 'Disk /' in i:
+               disk.append(i)
+        #return disk
+        for v in disk:
+            inter = v.split()
+            #return inter
+            cmd = "lsblk -f {}".format(inter[1][:-1])
+            return cmd 
+            check_blk = str(subprocess.check_output(cmd,shell=True))
+            return check_blk 
